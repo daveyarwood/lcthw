@@ -1,7 +1,16 @@
+CC=cc
 CFLAGS=-Wall -g
 
-all: ex15
+source_files = $(wildcard *.c)
+
+.PHONY: all $(source_files) clean
+
+all:
+	$(MAKE) $(source_files)
+
+$(source_files):
+	mkdir -p compiled
+	$(CC) $(CFLAGS) $@ -o compiled/$(basename $@)
 
 clean:
-	rm -f ex15
-	rm -rf ex15.dSYM
+	rm -rf compiled
