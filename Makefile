@@ -1,16 +1,16 @@
 CC=cc
 CFLAGS=-Wall -g
 
-source_files = $(wildcard *.c)
+SOURCE_FILES := $(wildcard *.c)
+COMPILED := $(addprefix target/, $(basename $(SOURCE_FILES)))
 
-.PHONY: all $(source_files) clean
+all: $(COMPILED)
 
-all:
-	$(MAKE) $(source_files)
+target/%: %.c | target
+	$(CC) $(CFLAGS) $^ -o $@
 
-$(source_files):
-	mkdir -p compiled
-	$(CC) $(CFLAGS) $@ -o compiled/$(basename $@)
+target:
+	mkdir -p target
 
 clean:
-	rm -rf compiled
+	rm -rf target
