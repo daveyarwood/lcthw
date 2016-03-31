@@ -47,7 +47,7 @@ int Shell_run(apr_pool_t* p, Shell* cmd) {
   rv = apr_procattr_create(&attr, p);
   check(rv == APR_SUCCESS, "Failed to create proc attr.");
 
-  rv = procattr_io_set(attr, APR_NO_PIPE, APR_NO_PIPE, APR_NO_PIPE);
+  rv = apr_procattr_io_set(attr, APR_NO_PIPE, APR_NO_PIPE, APR_NO_PIPE);
   check(rv == APR_SUCCESS, "Failed to set IO of command.");
 
   rv = apr_procattr_dir_set(attr, cmd->dir);
@@ -62,7 +62,7 @@ int Shell_run(apr_pool_t* p, Shell* cmd) {
   rv = apr_proc_wait(&newproc, &cmd->exit_code, &cmd->exit_why, APR_WAIT);
   check(rv == APR_CHILD_DONE, "Failed to wait.");
 
-  check(cmd->exit_code == 0, "%s exited badly." cmd->exe);
+  check(cmd->exit_code == 0, "%s exited badly.", cmd->exe);
   check(cmd->exit_why == APR_PROC_EXIT, "%s was killed or crashed", cmd->exe);
 
   return 0;
@@ -71,5 +71,46 @@ error:
   return -1;
 }
 
-// TODO: copy builtin shell commands
-// TODO: fix errors
+Shell CLEANUP_SH = {
+  .exe = "rm",
+  .dir = "/tmp",
+  .args = {"rm", "-rf", "/tmp/pkg-build", "/tmp/pkg-src.tar.gz",
+           "/tmp/pkg-src.tar.bz2", "/tmp/DEPENDS", NULL}
+};
+
+Shell GIT_SH = {
+  .exe = "git",
+  .dir = "tmp",
+  .args = {"git", "clone", "URL", "pkg-build", NULL}
+};
+
+Shell TAR_SH = {
+  .exe = "tar",
+  .dir = "/tmp/pkg-build",
+  .args = {"tar", "-xzf", "FILE", "--strip-components", "1", NULL}
+};
+
+Shell CURL_SH = {
+  .exe = "curl",
+  .dir = "/tmp",
+  .args = {"curl", "-L", "-o", "TARGET", "URL", NULL}
+};
+
+Shell CONFIGURE_SH = {
+  .exe = "./configure",
+  .dir = "/tmp/pkg-build",
+  .args = {"make", "OPTS", NULL}
+};
+
+Shell MAKE_SH = {
+  .exe = "make",
+  .dir = "/tmp/pkg-build",
+  .args = {"make", "OPTS", NULL}
+};
+
+Shell INSTALL_SH = {
+  .exe = "sudo",
+  .dir = "/tmp/pkg-build",
+  .args = {"sudo", "make", "TARGET", NULL}
+};
+
