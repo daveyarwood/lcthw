@@ -10,6 +10,7 @@ int Shell_exec(Shell template, ...) {
   const char* key = NULL;
   const char* arg = NULL;
   int i = 0;
+  int args_replaced = 0;
 
   rv = apr_pool_create(&p, NULL);
   check(rv == APR_SUCCESS, "Failed to create pool.");
@@ -24,10 +25,15 @@ int Shell_exec(Shell template, ...) {
     for (i = 0; template.args[i] != NULL; i++) {
       if (strcmp(template.args[i], key) == 0) {
         template.args[i] = arg;
+        args_replaced++;
         break; // found it
       }
     }
   }
+
+  check(args_replaced == template.num_args,
+        "Incorrect number of arguments received."
+        "Expected %d, got %d.", template.num_args, args_replaced);
 
   rc = Shell_run(p, &template);
   apr_pool_destroy(p);
@@ -75,42 +81,49 @@ Shell CLEANUP_SH = {
   .exe = "rm",
   .dir = "/tmp",
   .args = {"rm", "-rf", "/tmp/pkg-build", "/tmp/pkg-src.tar.gz",
-           "/tmp/pkg-src.tar.bz2", "/tmp/DEPENDS", NULL}
+           "/tmp/pkg-src.tar.bz2", "/tmp/DEPENDS", NULL},
+  .num_args = 1
 };
 
 Shell GIT_SH = {
   .exe = "git",
   .dir = "tmp",
-  .args = {"git", "clone", "URL", "pkg-build", NULL}
+  .args = {"git", "clone", "URL", "pkg-build", NULL},
+  .num_args = 1
 };
 
 Shell TAR_SH = {
   .exe = "tar",
   .dir = "/tmp/pkg-build",
-  .args = {"tar", "-xzf", "FILE", "--strip-components", "1", NULL}
+  .args = {"tar", "-xzf", "FILE", "--strip-components", "1", NULL},
+  .num_args = 1
 };
 
 Shell CURL_SH = {
   .exe = "curl",
   .dir = "/tmp",
-  .args = {"curl", "-L", "-o", "TARGET", "URL", NULL}
+  .args = {"curl", "-L", "-o", "TARGET", "URL", NULL},
+  .num_args = 2
 };
 
 Shell CONFIGURE_SH = {
   .exe = "./configure",
   .dir = "/tmp/pkg-build",
-  .args = {"make", "OPTS", NULL}
+  .args = {"make", "OPTS", NULL},
+  .num_args = 1
 };
 
 Shell MAKE_SH = {
   .exe = "make",
   .dir = "/tmp/pkg-build",
-  .args = {"make", "OPTS", NULL}
+  .args = {"make", "OPTS", NULL},
+  .num_args = 1
 };
 
 Shell INSTALL_SH = {
   .exe = "sudo",
   .dir = "/tmp/pkg-build",
-  .args = {"sudo", "make", "TARGET", NULL}
+  .args = {"sudo", "make", "TARGET", NULL},
+  .num_args = 1
 };
 
