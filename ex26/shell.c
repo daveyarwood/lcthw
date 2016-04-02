@@ -82,7 +82,7 @@ Shell CLEANUP_SH = {
   .dir = "/tmp",
   .args = {"rm", "-rf", "/tmp/pkg-build", "/tmp/pkg-src.tar.gz",
            "/tmp/pkg-src.tar.bz2", "/tmp/DEPENDS", NULL},
-  .num_args = 1
+  .num_args = 0
 };
 
 Shell GIT_SH = {
