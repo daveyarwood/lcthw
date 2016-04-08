@@ -27,6 +27,6 @@ int lowercase(int msg_len, const char* msg) {
   return 0;
 }
 
-int fail_on_purpose(int msg_len, const char* msg) {
+int fail_on_purpose() {
   return 1;
 }

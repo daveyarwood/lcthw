@@ -3,16 +3,16 @@ LIBS=-ldl $(OPTLIBS)
 PREFIX?=/usr/local
 
 SOURCES=$(wildcard src/**/*.c src/*.c)
+
 OBJECTS=$(patsubst %.c,%.o,$(subst src/,build/,$(SOURCES)))
 
 TEST_SRC=$(wildcard tests/*_tests.c)
 TESTS=$(patsubst %.c,%,$(TEST_SRC))
 
-TARGET=build/libYOUR_LIBRARY.a
-SO_TARGET=$(patsubst %.a,%.so,$(TARGET))
+SO_TARGET=build/libex29.so
 
 # The target build
-all: $(TARGET) $(SO_TARGET) tests
+all: $(SO_TARGET) tests
 
 dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
 dev: all
@@ -20,12 +20,7 @@ dev: all
 $(OBJECTS): $(SOURCES) | build
 	$(CC) $(CFLAGS) $^ -c -o $@
 
-$(TARGET): CFLAGS += -fPIC
-$(TARGET): build $(OBJECTS)
-	ar rcs $@ $(OBJECTS)
-	ranlib $@
-
-$(SO_TARGET): $(TARGET) $(OBJECTS)
+$(SO_TARGET): $(OBJECTS) | build
 	$(CC) -shared -o $@ $(OBJECTS)
 
 build:
@@ -34,7 +29,7 @@ build:
 
 # The unit tests
 .PHONY: tests
-tests: CFLAGS += $(TARGET)
+tests: CFLAGS += $(SO_TARGET)
 tests: $(TESTS)
 	sh ./tests/runtests.sh
 
@@ -51,7 +46,7 @@ clean:
 # The install
 install: all
 	install -d $(DESTDIR)/$(PREFIX)/lib/
-	install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/
+	install $(SO_TARGET) $(DESTDIR)/$(PREFIX)/lib/
 
 # the checker
 BADFUNCS='[^_.>a-zA-Z0-9](str(n?cpy|n?cat|xfrm|n?dup|str|pbrk|tok|_)|stpn?cpy|a?sn?printf|byte_)'
