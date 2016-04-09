@@ -1,0 +1,4 @@
+build/
+tests/test.log
+tests/ex29_tests
+*.dSYM/
