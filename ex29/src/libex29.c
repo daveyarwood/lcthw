@@ -2,7 +2,7 @@
 #include <ctype.h>
 #include "dbg.h"
 
-int print_a_message(const char* msg) {
+int print_a_message(int msg_len, const char* msg) {
   printf("A STRING: %s\n", msg);
   return 0;
 }

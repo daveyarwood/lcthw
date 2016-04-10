@@ -1,4 +1,5 @@
 build/
-tests/test.log
+tests/tests.log
+tests/libex29_tests
 tests/ex29_tests
 *.dSYM/
