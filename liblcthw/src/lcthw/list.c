@@ -1,5 +1,5 @@
-#include "list.h"
-#include "dbg.h"
+#include <lcthw/list.h>
+#include <lcthw/dbg.h>
 
 List* List_create() {
   return calloc(1, sizeof(List));
@@ -10,10 +10,10 @@ void List_destroy(List* list) {
     if (cur->prev) {
       free(cur->prev);
     }
-
-    free(list->last);
-    free(list);
   }
+
+  free(list->last);
+  free(list);
 }
 
 void List_clear(List* list) {

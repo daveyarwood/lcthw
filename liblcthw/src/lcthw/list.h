@@ -32,7 +32,7 @@ void* List_pop(List* list);
 void List_unshift(List* list, void* value);
 void* List_shift(List* list);
 
-void* List_revome(List* list, ListNode* node);
+void* List_remove(List* list, ListNode* node);
 
 #define LIST_FOREACH(L, S, M, V) \
   ListNode* _node = NULL; \

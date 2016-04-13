@@ -3,6 +3,7 @@ LIBS=-ldl $(OPTLIBS)
 PREFIX?=/usr/local
 
 SOURCES=$(wildcard src/**/*.c src/*.c)
+BUILD_DIRS=$(subst src/,build/,$(dir $(SOURCES)))
 OBJECTS=$(patsubst %.c,%.o,$(subst src/,build/,$(SOURCES)))
 
 TEST_SRC=$(wildcard tests/*_tests.c)
@@ -28,9 +29,11 @@ $(TARGET): build $(OBJECTS)
 $(SO_TARGET): $(TARGET) $(OBJECTS)
 	$(CC) -shared -o $@ $(OBJECTS)
 
-build:
-	@mkdir -p build
+build: | $(BUILD_DIRS)
 	@mkdir -p bin
+
+$(BUILD_DIRS): $(SOURCES)
+	@mkdir -p $@
 
 # The unit tests
 .PHONY: tests

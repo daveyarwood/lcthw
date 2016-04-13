@@ -1,3 +1,4 @@
 build/
-tests/test.log
+tests/tests.log
+tests/*_tests
 *.dSYM/
