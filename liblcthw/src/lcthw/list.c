@@ -5,29 +5,51 @@ List* List_create() {
   return calloc(1, sizeof(List));
 }
 
-void List_destroy(List* list) {
+void List_validate(List* list) {
+  check(list != NULL, "List is NULL.");
+  check(list->count >= 0, "List has a negative count.");
+
+  if (list->count > 0) {
+    check(list->first != NULL, "List has at least one item, but the first item is NULL.");
+  }
+
+error:
+  return;
+}
+
+void _clear_and_or_destroy(List* list, int clear, int destroy) {
+  List_validate(list);
+
   LIST_FOREACH(list, first, next, cur) {
-    if (cur->prev) {
+    if (clear) {
+      free(cur->value);
+    }
+    if (destroy && cur->prev) {
       free(cur->prev);
     }
   }
 
-  free(list->last);
-  free(list);
-}
-
-void List_clear(List* list) {
-  LIST_FOREACH(list, first, next, cur) {
-    free(cur->value);
+  if (destroy) {
+    free(list->last);
+    free(list);
   }
 }
 
+void List_clear(List* list) {
+  _clear_and_or_destroy(list, 1, 0);
+}
+
+void List_destroy(List* list) {
+  _clear_and_or_destroy(list, 0, 1);
+}
+
 void List_clear_destroy(List* list) {
-  List_clear(list);
-  List_destroy(list);
+  _clear_and_or_destroy(list, 1, 1);
 }
 
 void List_push(List* list, void* value) {
+  List_validate(list);
+
   ListNode* node = calloc(1, sizeof(ListNode));
   check_mem(node);
 
@@ -49,11 +71,15 @@ error:
 }
 
 void* List_pop(List* list) {
+  List_validate(list);
+
   ListNode* node = list->last;
   return node != NULL ? List_remove(list, node) : NULL;
 }
 
 void List_unshift(List* list, void* value) {
+  List_validate(list);
+
   ListNode* node = calloc(1, sizeof(ListNode));
   check_mem(node);
 
@@ -75,11 +101,15 @@ error:
 }
 
 void* List_shift(List* list) {
+  List_validate(list);
+
   ListNode* node = list->first;
   return node != NULL ? List_remove(list, node) : NULL;
 }
 
 void* List_remove(List* list, ListNode* node) {
+  List_validate(list);
+
   void* result = NULL;
 
   check(list->first && list->last, "List is empty.");
