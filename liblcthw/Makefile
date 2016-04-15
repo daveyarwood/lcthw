@@ -4,7 +4,7 @@ PREFIX?=/usr/local
 
 SOURCES=$(wildcard src/**/*.c src/*.c)
 BUILD_DIRS=$(subst src/,build/,$(dir $(SOURCES)))
-OBJECTS=$(patsubst %.c,%.o,$(subst src/,build/,$(SOURCES)))
+OBJECTS=$(patsubst src/%.c,build/%.o,$(SOURCES))
 
 TEST_SRC=$(wildcard tests/*_tests.c)
 TESTS=$(patsubst %.c,%,$(TEST_SRC))
