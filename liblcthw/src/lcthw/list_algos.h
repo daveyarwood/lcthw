@@ -4,8 +4,13 @@
 #include <stdlib.h>
 #include <lcthw/list.h>
 
-// TODO: define List_compare (comparator) type (fn pointer?)
-// need to be able to cast things like strcmp to it
+/*
+ * Function pointer to a comparator function which compares two strings `a`
+ * and `b` and returns < 0 if `a` comes before `b` in sort order, 0 if the
+ * strings are equivalent in sort order, or > 0 if `b` comes before `a` in sort
+ * order.
+ */
+typedef int (*List_compare)(char* a, char* b);
 
 /*
  * Sorts `list` in place using the bubble sort algorithm.
