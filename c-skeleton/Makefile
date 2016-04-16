@@ -18,8 +18,8 @@ all: $(TARGET) $(SO_TARGET) tests
 dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
 dev: all
 
-$(OBJECTS): $(SOURCES) | build
-	$(CC) $(CFLAGS) $^ -c -o $@
+$(OBJECTS): build/%.o: src/%.c | build
+	$(CC) $(CFLAGS) $< -c -o $@
 
 $(TARGET): CFLAGS += -fPIC
 $(TARGET): build $(OBJECTS)
@@ -29,11 +29,9 @@ $(TARGET): build $(OBJECTS)
 $(SO_TARGET): $(TARGET) $(OBJECTS)
 	$(CC) -shared -o $@ $(OBJECTS)
 
-build: | $(BUILD_DIRS)
+build:
 	@mkdir -p bin
-
-$(BUILD_DIRS): $(SOURCES)
-	@mkdir -p $@
+	@mkdir -p $(BUILD_DIRS)
 
 # The unit tests
 .PHONY: tests
