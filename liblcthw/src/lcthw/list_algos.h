@@ -5,12 +5,12 @@
 #include <lcthw/list.h>
 
 /*
- * Function pointer to a comparator function which compares two strings `a`
+ * Function pointer to a comparator function which compares two things `a`
  * and `b` and returns < 0 if `a` comes before `b` in sort order, 0 if the
  * strings are equivalent in sort order, or > 0 if `b` comes before `a` in sort
  * order.
  */
-typedef int (*List_compare)(char* a, char* b);
+typedef int (*List_compare)(void* a, void* b);
 
 /*
  * Sorts `list` in place using the bubble sort algorithm.

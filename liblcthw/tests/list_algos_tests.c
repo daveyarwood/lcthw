@@ -42,6 +42,7 @@ char* test_bubble_sort() {
   mu_assert(is_sorted(words), "Words are not sorted after bubble sort.");
 
   List_destroy(words);
+  sentinel("GOT HERE");
 
   // should work on an empty list
   words = List_create();
@@ -52,6 +53,10 @@ char* test_bubble_sort() {
   List_destroy(words);
 
   return NULL;
+
+  //debug
+error:
+  return "FUCK";
 }
 
 char* test_merge_sort() {
@@ -75,7 +80,7 @@ char* all_tests() {
   mu_suite_start();
 
   mu_run_test(test_bubble_sort);
-  mu_run_test(test_merge_sort);
+  /* mu_run_test(test_merge_sort); */
 
   return NULL;
 }

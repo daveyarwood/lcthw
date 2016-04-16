@@ -55,6 +55,9 @@ void List_clear_destroy(List* list);
 /* Returns the last item in the list. */
 #define List_last(A) ((A)->last != NULL ? (A)->last->value : NULL)
 
+/* Returns 1 if `list` is empty, else returns 0. */
+int List_is_empty(List* list);
+
 /* Adds a new item with the given `value` to the end of the `list`. */
 void List_push(List* list, void* value);
 
@@ -70,7 +73,18 @@ void* List_shift(List* list);
 /* Removes `node` from `list`. */
 void* List_remove(List* list, ListNode* node);
 
-/* Helper macro for iterating through the items in a list. */
+/* Swaps the positions of list nodes `a` and `b` in `list`. */
+void List_swap(List* list, ListNode* a, ListNode* b);
+
+/*
+ * Helper macro for iterating through the items in a list.
+ *
+ * L: the list being iterated through
+ * S: the starting point, e.g. `first` (== list->first)
+ * M: the point gone to on each iteration, e.g. `next` (== _node->next)
+ * V: the local variable assigned to the current node on each iteration
+ */
+
 #define LIST_FOREACH(L, S, M, V) \
   ListNode* _node = NULL; \
   ListNode* V = NULL; \
