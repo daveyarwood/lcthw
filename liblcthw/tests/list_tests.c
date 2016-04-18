@@ -118,17 +118,7 @@ char* test_swap() {
   List_push(list, "two");
   List_push(list, "three");
 
-  printf("count before: %d\n", List_count(list));
-
   List_swap(list, list->first, list->last);
-  printf("count after: %d\n", List_count(list));
-
-  LIST_FOREACH(list, first, next, cur) {
-    printf("%s\n", cur->value);
-    if (cur->next && cur->next->value) {
-      printf("next: %s\n", cur->next->value);
-    }
-  }
 
   mu_assert(list->first->value == "three", "List swap failed.");
   mu_assert(list->first->next->value == "two", "List swap failed.");

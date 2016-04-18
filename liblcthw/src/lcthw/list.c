@@ -26,17 +26,11 @@ void _clear_and_or_destroy(List* list, int clear, int destroy) {
   }
 
   LIST_FOREACH(list, first->next, next, cur) {
-    if (cur == NULL) {
-      printf("%s\n", "wtf cur is NULL");
-    }
-    printf("cur: %s, prev: %s\n", cur->value, cur->prev->value);
     if (destroy) {
       free(cur->prev);
     } else if (clear) {
       free(cur->prev->value);
     }
-
-    printf("next: %s\n", cur->next->value);
   }
 
   if (destroy) {
@@ -161,38 +155,9 @@ void List_swap(List* list, ListNode* a, ListNode* b) {
   List_validate(list);
   check(a != NULL && b != NULL, "List_swap failed: one or both nodes is NULL.");
 
-  if (list->first == a) {
-    list->first = b;
-  } else if (list->first == b) {
-    list->first = a;
-  }
-
-  if (list->last == a) {
-    list->last = b;
-  } else if (list->last == b) {
-    list->last = a;
-  }
-
-  ListNode* a_prev = a->prev;
-  ListNode* a_next = a->next;
-
-  if (a->prev != NULL) {
-    a->prev->next = b;
-  }
-  if (a->next != NULL) {
-    a->next->prev = b;
-  }
-  a->prev = b->prev;
-  a->next = b->next;
-
-  if (b->prev != NULL) {
-    b->prev->next = a;
-  }
-  if (b->next != NULL) {
-    b->next->prev = a;
-  }
-  b->prev = a_prev;
-  b->next = a_next;
+  void* a_value = a->value;
+  a->value = b->value;
+  b->value = a_value;
 
 error:
   return;
