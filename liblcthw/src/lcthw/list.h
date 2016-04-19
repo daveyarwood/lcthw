@@ -45,6 +45,11 @@ void List_destroy(List* list);
 void List_clear_destroy(List* list);
 
 /*
+ * Returns a copy of `list`.
+ */
+List* List_copy(List* list);
+
+/*
  * Returns the number of items in the list.
  */
 #define List_count(A) ((A)->count)
@@ -55,8 +60,14 @@ void List_clear_destroy(List* list);
 /* Returns the last item in the list. */
 #define List_last(A) ((A)->last != NULL ? (A)->last->value : NULL)
 
+/* Returns the item at index `i` in `list`. */
+void* List_at(List* list, int i);
+
 /* Returns 1 if `list` is empty, else returns 0. */
 int List_is_empty(List* list);
+
+/* Returns 1 if `list1` has the same count and the same values as `list2`. */
+int List_equal(List* list1, List* list2);
 
 /* Adds a new item with the given `value` to the end of the `list`. */
 void List_push(List* list, void* value);

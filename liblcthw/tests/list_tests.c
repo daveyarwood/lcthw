@@ -114,15 +114,79 @@ char* test_is_empty() {
 
 char* test_swap() {
   List* list = List_create();
-  List_push(list, "one");
-  List_push(list, "two");
-  List_push(list, "three");
+  List_push(list, test1);
+  List_push(list, test2);
+  List_push(list, test3);
 
   List_swap(list, list->first, list->last);
 
-  mu_assert(list->first->value == "three", "List swap failed.");
-  mu_assert(list->first->next->value == "two", "List swap failed.");
-  mu_assert(list->last->value == "one", "List swap failed.");
+  mu_assert(list->first->value == test3, "List swap failed.");
+  mu_assert(list->first->next->value == test2, "List swap failed.");
+  mu_assert(list->last->value == test1, "List swap failed.");
+
+  return NULL;
+}
+
+char* test_at() {
+  List* list = List_create();
+  List_push(list, test1);
+  List_push(list, test2);
+  List_push(list, test3);
+
+  mu_assert(List_at(list, 0) == test1, "List_at(list, 0) should be test1");
+  mu_assert(List_at(list, 1) == test2, "List_at(list, 1) should be test2");
+  mu_assert(List_at(list, 2) == test3, "List_at(list, 2) should be test3");
+  mu_assert(List_at(list, 3) == NULL, "List_at(list, 3) should be NULL");
+  mu_assert(List_at(list, 42) == NULL, "List_at(list, 42) should be NULL");
+
+  return NULL;
+}
+
+char* test_equal() {
+  List* list1 = List_create();
+  List* list2 = List_create();
+
+  mu_assert(List_equal(list1, list2), "Empty lists should be equal.");
+
+  List_push(list1, test1);
+  List_push(list1, test2);
+  List_push(list1, test3);
+
+  List_push(list2, test1);
+  List_push(list2, test2);
+  List_push(list2, test3);
+
+  mu_assert(List_equal(list1, list2), "Lists with the same items should be equal.");
+
+  List_pop(list1);
+
+  mu_assert(!List_equal(list1, list2), "Lists with differing counts should not be equal.");
+
+  List_push(list1, test3);
+
+  mu_assert(List_equal(list1, list2), "Lists with the same items should be equal.");
+
+  list1->last->value = "applesauce";
+
+  mu_assert(!List_equal(list1, list2), "Lists with differing values should not be equal.");
+
+  return NULL;
+}
+
+char* test_copy() {
+  List* list = List_create();
+  List_push(list, test1);
+  List_push(list, test2);
+  List_push(list, test3);
+
+  List* list_copy = List_copy(list);
+
+  mu_assert(List_equal(list, list_copy), "A copy of a list should be equal the list.");
+
+  List* empty_list = List_create();
+  List* empty_list_copy = List_copy(empty_list);
+
+  mu_assert(List_equal(empty_list, empty_list_copy), "A copy of an empty list should be equal to the empty list.");
 
   return NULL;
 }
@@ -138,6 +202,9 @@ char* all_tests() {
   mu_run_test(test_shift);
   mu_run_test(test_is_empty);
   mu_run_test(test_swap);
+  mu_run_test(test_at);
+  mu_run_test(test_equal);
+  mu_run_test(test_copy);
 
   return NULL;
 }

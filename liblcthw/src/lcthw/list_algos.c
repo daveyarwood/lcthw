@@ -36,6 +36,68 @@ int List_bubble_sort(List* list, List_compare comparator) {
   return 0;
 }
 
-List* List_merge_sort(List* list, List_compare comparator) {
+void _split_list_in_half(List* list, List** a, List** b) {
+  *a = List_create();
+  *b = List_create();
 
+  for (int i = 0; i < List_count(list); i++) {
+    if (i % 2 == 0) {
+      List_push(*a, List_shift(list));
+    } else {
+      List_push(*b, List_shift(list));
+    }
+  }
+
+  List_destroy(list);
+}
+
+List* _merge_sorted_lists(List* result, List* a, List* b, List_compare comparator) {
+  if (List_is_empty(a) && List_is_empty(b)) {
+    List_destroy(a);
+    List_destroy(b);
+    return result;
+  }
+
+  if (List_is_empty(a)) {
+    while (!List_is_empty(b)) {
+      List_push(result, List_shift(b));
+    }
+    List_destroy(a);
+    List_destroy(b);
+    return result;
+  }
+
+  if (List_is_empty(b)) {
+    while (!List_is_empty(a)) {
+      List_push(result, List_shift(a));
+    }
+    List_destroy(a);
+    List_destroy(b);
+    return result;
+  }
+
+  if (comparator(a->first->value, b->first->value) < 0) {
+    List_push(result, List_shift(a));
+  } else {
+    List_push(result, List_shift(b));
+  }
+
+  return _merge_sorted_lists(result, a, b, comparator);
+}
+
+List* List_merge_sort(List* list, List_compare comparator) {
+  List* list_copy = List_copy(list);
+
+  if (List_count(list_copy) <= 1) {
+    return list;
+  }
+
+  List* a;
+  List* b;
+  _split_list_in_half(list_copy, &a, &b);
+
+  a = List_merge_sort(a, comparator);
+  b = List_merge_sort(b, comparator);
+
+  return _merge_sorted_lists(List_create(), a, b, comparator);
 }

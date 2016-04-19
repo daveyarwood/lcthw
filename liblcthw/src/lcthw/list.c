@@ -53,8 +53,56 @@ void List_clear_destroy(List* list) {
   _clear_and_or_destroy(list, 1, 1);
 }
 
+List* List_copy(List* list) {
+  List_validate(list);
+
+  List* list_copy = List_create();
+
+  for (int i = 0; i < List_count(list); i++) {
+    List_push(list_copy, List_at(list, i));
+  }
+
+  return list_copy;
+}
+
+void* List_at(List* list, int i) {
+  List_validate(list);
+
+  if (i < 0 || i >= List_count(list)) {
+    return NULL;
+  }
+
+  ListNode* node = list->first;
+
+  while (i > 0) {
+    node = node->next;
+    i--;
+  }
+
+  return node->value;
+}
+
 int List_is_empty(List* list) {
   return List_count(list) == 0;
+}
+
+int List_equal(List* a, List* b) {
+  if (List_count(a) != List_count(b)) {
+    return 0;
+  }
+
+  ListNode* a_node = a->first;
+  ListNode* b_node = b->first;
+
+  for (int i = 0; i < List_count(a); i++) {
+    if (a_node->value != b_node->value) {
+      return 0;
+    }
+    a_node = a_node->next;
+    b_node = b_node->next;
+  }
+
+  return 1;
 }
 
 void List_push(List* list, void* value) {
