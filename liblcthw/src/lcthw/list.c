@@ -1,6 +1,16 @@
 #include <lcthw/list.h>
 #include <lcthw/dbg.h>
 
+ListNode* ListNode_create(void* value) {
+  ListNode* node = calloc(1, sizeof(ListNode));
+  check_mem(node);
+  node->value = value;
+  return node;
+
+error:
+  return NULL;;
+}
+
 List* List_create() {
   return calloc(1, sizeof(List));
 }
@@ -108,10 +118,7 @@ int List_equal(List* a, List* b) {
 void List_push(List* list, void* value) {
   List_validate(list);
 
-  ListNode* node = calloc(1, sizeof(ListNode));
-  check_mem(node);
-
-  node->value = value;
+  ListNode* node = ListNode_create(value);
 
   if (list->last == NULL) {
     list->first = node;
@@ -123,9 +130,6 @@ void List_push(List* list, void* value) {
   }
 
   list->count++;
-
-error:
-  return;
 }
 
 void* List_pop(List* list) {
@@ -138,10 +142,7 @@ void* List_pop(List* list) {
 void List_unshift(List* list, void* value) {
   List_validate(list);
 
-  ListNode* node = calloc(1, sizeof(ListNode));
-  check_mem(node);
-
-  node->value = value;
+  ListNode* node = ListNode_create(value);
 
   if (list->first == NULL) {
     list->first = node;
@@ -153,9 +154,6 @@ void List_unshift(List* list, void* value) {
   }
 
   list->count++;
-
-error:
-  return;
 }
 
 void* List_shift(List* list) {
@@ -163,6 +161,23 @@ void* List_shift(List* list) {
 
   ListNode* node = list->first;
   return node != NULL ? List_remove(list, node) : NULL;
+}
+
+void List_insert_before(List* list, ListNode* node, void* value) {
+  ListNode* new_node = ListNode_create(value);
+
+  if (node->prev != NULL) {
+    node->prev->next = new_node;
+  } else {
+    list->first = new_node;
+  }
+
+  new_node->prev = node->prev;
+  new_node->next = node;
+
+  node->prev = new_node;
+
+  list->count++;
 }
 
 void* List_remove(List* list, ListNode* node) {

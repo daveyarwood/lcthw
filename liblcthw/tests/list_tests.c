@@ -191,6 +191,23 @@ char* test_copy() {
   return NULL;
 }
 
+char* test_insert_before() {
+  List* list = List_create();
+  List_push(list, test1);
+  List_push(list, test2);
+  List_push(list, test3);
+
+  List_insert_before(list, list->first, "one");
+  mu_assert(List_first(list) == "one", "\"one\" should have been inserted at the beginning of the list.");
+  mu_assert(list->first->next->value == test1, "\"one\" should have been inserted before test1.");
+
+  List_insert_before(list, list->first->next->next, "two");
+  mu_assert(list->first->next->next->value == "two", "\"two\" should have been inserted before test2.");
+  mu_assert(list->first->next->next->next->value == test2, "\"two\" should have been inserted before test2.");
+
+  return NULL;
+}
+
 char* all_tests() {
   mu_suite_start();
 
@@ -205,6 +222,7 @@ char* all_tests() {
   mu_run_test(test_at);
   mu_run_test(test_equal);
   mu_run_test(test_copy);
+  mu_run_test(test_insert_before);
 
   return NULL;
 }

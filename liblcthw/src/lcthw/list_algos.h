@@ -25,4 +25,12 @@ int List_bubble_sort(List* list, List_compare comparator);
  */
 List* List_merge_sort(List* list, List_compare comparator);
 
+/*
+ * Inserts a `value` into a `list` at the right position so that the list is in
+ * sort order.
+ *
+ * Assumes the list is already sorted.
+ */
+void List_insert_sorted(List* list, void* value, List_compare comparator);
+
 #endif

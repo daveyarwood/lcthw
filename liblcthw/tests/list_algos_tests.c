@@ -71,11 +71,33 @@ char* test_merge_sort() {
   return NULL;
 }
 
+char* test_insert_sorted() {
+  List* list = List_create();
+
+  // should insert into an empty list
+  List_insert_sorted(list, "xxxx", (List_compare)strcmp);
+  mu_assert(List_count(list) == 1, "List_insert_sorted didn't increment the count from 0 to 1.");
+  mu_assert(List_first(list) == "xxxx", "List_insert_sorted didn't insert \"xxxx\" into the list.");
+
+  // should insert values into the list in sort order
+  List_insert_sorted(list, "zzzz", (List_compare)strcmp);
+  List_insert_sorted(list, "f", (List_compare)strcmp);
+  List_insert_sorted(list, "abcd", (List_compare)strcmp);
+  List_insert_sorted(list, "aaaa", (List_compare)strcmp);
+  List_insert_sorted(list, "dddd", (List_compare)strcmp);
+  List_insert_sorted(list, "zxyw", (List_compare)strcmp);
+
+  mu_assert(is_sorted(list), "Items out of order after List_insert_sorted.");
+
+  return NULL;
+}
+
 char* all_tests() {
   mu_suite_start();
 
   mu_run_test(test_bubble_sort);
   mu_run_test(test_merge_sort);
+  mu_run_test(test_insert_sorted);
 
   return NULL;
 }

@@ -101,3 +101,22 @@ List* List_merge_sort(List* list, List_compare comparator) {
 
   return _merge_sorted_lists(List_create(), a, b, comparator);
 }
+
+void List_insert_sorted(List* list, void* value, List_compare comparator) {
+  if (List_is_empty(list)) {
+    List_push(list, value);
+    return;
+  }
+
+  ListNode* node = list->first;
+
+  while (comparator(value, node->value) > 0 && node->next != NULL) {
+    node = node->next;
+  }
+
+  if (comparator(value, node->value) > 0 && node->next == NULL) {
+    List_push(list, value);
+  } else {
+    List_insert_before(list, node, value);
+  }
+}

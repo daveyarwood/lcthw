@@ -11,6 +11,11 @@ typedef struct ListNode {
   void* value;
 } ListNode;
 
+/*
+ * Creates a new list node with the given `value`.
+ */
+ListNode* ListNode_create(void* value);
+
 typedef struct List {
   int count;
   ListNode* first;
@@ -80,6 +85,9 @@ void List_unshift(List* list, void* value);
 
 /* Removes the first item in `list` and returns its value. */
 void* List_shift(List* list);
+
+/* Inserts `value` into the list in the position before `node`. */
+void List_insert_before(List* list, ListNode* node, void* value);
 
 /* Removes `node` from `list`. */
 void* List_remove(List* list, ListNode* node);
