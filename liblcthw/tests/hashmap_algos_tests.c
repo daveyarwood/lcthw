@@ -46,9 +46,40 @@ char* test_djb() {
   return NULL;
 }
 
-// .................... //
-// .................... //
-// .................... //
+#define BUCKETS 100
+#define BUFFER_LEN 20
+#define NUM_KEYS BUCKETS * 1000
+
+enum {
+  ALGO_FNVIA,
+  ALGO_ADLER32,
+  ALGO_DJB
+};
+
+int gen_keys(DArray* keys, int num_keys) {
+  FILE* urand = fopen("/dev/urandom", "r");
+  check(urand != NULL, "Failed to open /dev/urandom");
+
+  struct bStream* stream = bsopen((bNread)fread, urand);
+  check(stream != NULL, "Failed to open /dev/urandom bStream");
+
+  bstring key = bfromcstr("");
+
+  // FNV1a histogram
+  for (int i = 0; i < num_keys; i++) {
+    int rc = bsread(key, stream, BUFFER_LEN);
+    check(rc >= 0, "Failed to read from /dev/urandom");
+
+    DArray_push(keys, bstrcpy(key));
+
+    bsclose(stream);
+    fclose(urand);
+    return 0;
+  }
+
+error:
+  return -1;
+}
 
 char *all_tests()
 {
