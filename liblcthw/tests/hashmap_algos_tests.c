@@ -69,16 +69,54 @@ int gen_keys(DArray* keys, int num_keys) {
   for (int i = 0; i < num_keys; i++) {
     int rc = bsread(key, stream, BUFFER_LEN);
     check(rc >= 0, "Failed to read from /dev/urandom");
-
     DArray_push(keys, bstrcpy(key));
-
-    bsclose(stream);
-    fclose(urand);
-    return 0;
   }
+
+  bsclose(stream);
+  fclose(urand);
+  return 0;
 
 error:
   return -1;
+}
+
+void destroy_keys(DArray* keys) {
+  for (int i = 0; i < NUM_KEYS; i++) {
+    bdestroy(DArray_get(keys, i));
+  }
+
+  DArray_destroy(keys);
+}
+
+void fill_distribution(int* stats, DArray* keys, Hashmap_hash hash_func) {
+  uint32_t hash = 0;
+
+  for (int i = 0; i < DArray_count(keys); i++) {
+    hash = hash_func(DArray_get(keys, i));
+    stats[hash % BUCKETS] += 1;
+  }
+}
+
+char* test_distribution() {
+  int stats[3][BUCKETS] = {{0}};
+  DArray* keys = DArray_create(0, NUM_KEYS);
+  mu_assert(gen_keys(keys, NUM_KEYS) == 0, "Failed to generate random keys.");
+
+  fill_distribution(stats[ALGO_FNVIA], keys, Hashmap_fnv1a_hash);
+  fill_distribution(stats[ALGO_ADLER32], keys, Hashmap_adler32_hash);
+  fill_distribution(stats[ALGO_DJB], keys, Hashmap_djb_hash);
+
+  fprintf(stderr, "FNV\tA32\tDJB\n");
+
+  for (int i = 0; i < BUCKETS; i++) {
+    fprintf(stderr, "%d\t%d\t%d\n", stats[ALGO_FNVIA][i],
+                                    stats[ALGO_ADLER32][i],
+                                    stats[ALGO_DJB][i]);
+  }
+
+  destroy_keys(keys);
+
+  return NULL;
 }
 
 char *all_tests()
@@ -88,7 +126,7 @@ char *all_tests()
     mu_run_test(test_fnv1a);
     mu_run_test(test_adler32);
     mu_run_test(test_djb);
-    /* mu_run_test(test_distribution); */
+    mu_run_test(test_distribution);
 
     return NULL;
 }
