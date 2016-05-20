@@ -7,6 +7,19 @@ struct tagbstring test1 = bsStatic("test data 1");
 struct tagbstring test2 = bsStatic("test data 2");
 struct tagbstring test3 = bsStatic("test data 3");
 
+char* test_default_hash() {
+  uint32_t hash = Hashmap_default_hash(&test1);
+  mu_assert(hash != 0, "Bad hash.");
+
+  hash = Hashmap_default_hash(&test2);
+  mu_assert(hash != 0, "Bad hash.");
+
+  hash = Hashmap_default_hash(&test3);
+  mu_assert(hash != 0, "Bad hash.");
+
+  return NULL;
+}
+
 char* test_fnv1a() {
   uint32_t hash = Hashmap_fnv1a_hash(&test1);
   mu_assert(hash != 0, "Bad hash.");
@@ -51,6 +64,7 @@ char* test_djb() {
 #define NUM_KEYS BUCKETS * 1000
 
 enum {
+  ALGO_DEFAULT,
   ALGO_FNVIA,
   ALGO_ADLER32,
   ALGO_DJB
@@ -98,20 +112,22 @@ void fill_distribution(int* stats, DArray* keys, Hashmap_hash hash_func) {
 }
 
 char* test_distribution() {
-  int stats[3][BUCKETS] = {{0}};
+  int stats[4][BUCKETS] = {{0}};
   DArray* keys = DArray_create(0, NUM_KEYS);
   mu_assert(gen_keys(keys, NUM_KEYS) == 0, "Failed to generate random keys.");
 
+  fill_distribution(stats[ALGO_DEFAULT], keys, Hashmap_default_hash);
   fill_distribution(stats[ALGO_FNVIA], keys, Hashmap_fnv1a_hash);
   fill_distribution(stats[ALGO_ADLER32], keys, Hashmap_adler32_hash);
   fill_distribution(stats[ALGO_DJB], keys, Hashmap_djb_hash);
 
-  fprintf(stderr, "FNV\tA32\tDJB\n");
+  fprintf(stderr, "DEF\tFNV\tA32\tDJB\n");
 
   for (int i = 0; i < BUCKETS; i++) {
-    fprintf(stderr, "%d\t%d\t%d\n", stats[ALGO_FNVIA][i],
-                                    stats[ALGO_ADLER32][i],
-                                    stats[ALGO_DJB][i]);
+    fprintf(stderr, "%d\t%d\t%d\t%d\n", stats[ALGO_DEFAULT][i],
+                                        stats[ALGO_FNVIA][i],
+                                        stats[ALGO_ADLER32][i],
+                                        stats[ALGO_DJB][i]);
   }
 
   destroy_keys(keys);
@@ -123,6 +139,7 @@ char *all_tests()
 {
     mu_suite_start();
 
+    mu_run_test(test_default_hash);
     mu_run_test(test_fnv1a);
     mu_run_test(test_adler32);
     mu_run_test(test_djb);

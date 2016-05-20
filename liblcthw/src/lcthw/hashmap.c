@@ -30,6 +30,10 @@ static uint32_t default_hash(void* a) {
   return hash;
 }
 
+uint32_t Hashmap_default_hash(void* a) {
+  return default_hash(a);
+}
+
 Hashmap* Hashmap_create(Hashmap_compare compare, Hashmap_hash hash) {
   Hashmap* map = calloc(1, sizeof(Hashmap));
   check_mem(map);

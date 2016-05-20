@@ -23,6 +23,8 @@ typedef struct HashmapNode {
 
 typedef int (*Hashmap_traverse_cb)(HashmapNode* node);
 
+uint32_t Hashmap_default_hash(void* a);
+
 Hashmap* Hashmap_create(Hashmap_compare compare, Hashmap_hash hash);
 
 void Hashmap_destroy(Hashmap* map);
